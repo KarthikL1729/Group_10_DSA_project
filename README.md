@@ -16,7 +16,7 @@
 
 ### People on list L have no MOVEMENT from their station for 14 days. (They stay in their current station, i.e. where they tested positive).
 
-# Q2 specific
+## Q2 specific
 
 ### We will use the danger values as weights for the edges to find the safest paths using Dijkstra's algo.
 
@@ -39,14 +39,14 @@
 ### access index of that person, in array
 ### cout<<status<<;
 
-# Q3 p2
+## Q3 p2
 
 ## Pseudocode p2
 
 ### access index of person
 ### cout<<cur_station;
 
-# Q3 p3
+## Q3 p3
 
 ## Pseudocode p3
 
