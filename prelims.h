@@ -12,3 +12,6 @@ typedef struct person{
 }person;
 
 person arr[];
+
+
+// Sreeharsha , adding a comment for trial
