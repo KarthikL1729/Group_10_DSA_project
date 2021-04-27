@@ -1,10 +1,7 @@
 #ifndef __Stations_Header__
 #define __Stations_Header__
 
-#include <stdio.h>
-#include <malloc.h>
 #include "vec.h"
-
 
 typedef struct StructStations StructStations; 
 typedef struct StationNode StationNode;
@@ -24,14 +21,14 @@ struct StationNode
     int NumOfPpl;               //Maintains Number of people in station. Required?
     int NumOfPositive;          //Number of Covid Positive people
     int NumOfPrimary;           //Number of Primary Contacts
-    int NUmOfSecondary;         //Number of Primary Contacts
-    float DangerValue;          //DangerValue of the station
+    int NUmOfSecondary;         //Number of Secondary Contacts
+    double DangerValue;          //DangerValue of the station
 
-    // int *ListOfPpl;             //Array containing index of the people currently in the station.
+    //int *ListOfPpl;             //Array containing index of the people currently in the station.
                                 //Have to confirm if this is required or not.
 };                          
 
-int CalculateDangerValue(StationNode Stn);      //Returns DangerValue of the station
+double CalculateDangerValue(StationNode Stn);      //Returns DangerValue of the station
 
 
 struct StructStations
@@ -44,7 +41,7 @@ struct StructStations
 void CreateStationsGraph(StructStations *GraphOfStations, int NumOfStations);  
 
 //Given input of the starting and ending stations and the distance, it is updated in the station node of both the stations
-void UpdateStnLength(int U, int V, int W, StructStations *GraphOfStations);
+void UpdateStnLength(int U, int V, double W, StructStations *GraphOfStations);
 
 //A function to return top3 safest paths
 

@@ -7,8 +7,8 @@
 
 void init_vec(vec *v)
 {
-    v->a[0] = (int *)malloc(sizeof(int)*SIZE);
-    v->a[1] = (int*)malloc(sizeof(int)*SIZE);
+    v->a[0] = (double*)malloc(sizeof(double)*SIZE);
+    v->a[1] = (double*)malloc(sizeof(double)*SIZE);
     v->cap = SIZE;
     v->cur = 0;
     //printf("HERE\n");
@@ -17,8 +17,8 @@ void init_vec(vec *v)
 int resize_vec(vec *v, int c)
 {
     //printf("HEREB\n");
-    int *x = (int *)realloc(v->a[0], sizeof(int) * c);
-    int *y = (int*)realloc(v->a[1],sizeof(int)*c);
+    double *x = (double*)realloc(v->a[0], sizeof(double)*c);
+    double *y = (double*)realloc(v->a[1],sizeof(double)*c);
     //printf("Resizing\n");
     if(x && y)
     {
@@ -30,7 +30,7 @@ int resize_vec(vec *v, int c)
     return -1;
 }
 
-void pb_vec(vec *v, int *val)
+void pb_vec(vec *v, double *val)
 {
     if(v->cap == v->cur)
     {
@@ -43,7 +43,7 @@ void pb_vec(vec *v, int *val)
     v->cur++;
 }
 
-void set_vec(vec *v, int *val)
+void set_vec(vec *v, double *val)
 {
     //we are searching the vector by the first element.
     int i=0;
@@ -58,7 +58,7 @@ void set_vec(vec *v, int *val)
     };
 }
 
-int get_vec(vec *v, int in)
+double get_vec(vec *v, int in)
 {
     //we are searching the vector by the first element.
 
@@ -69,7 +69,7 @@ int get_vec(vec *v, int in)
     return -1;
 }
 
-void del_vec(vec *v, int ToDelete)
+void del_vec(vec *v, double ToDelete)
 {
     //we are searching the vector by the first element.
 

@@ -1,8 +1,10 @@
 #include "Stations.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-int CalculateDangerValue(StationNode Stn)
+double CalculateDangerValue(StationNode Stn)
 {
-    float DangerVal = Stn.NumOfPositive + ((float)Stn.NumOfPrimary)/5 + ((float)Stn.NUmOfSecondary)/10;
+    double DangerVal = Stn.NumOfPositive + ((double)Stn.NumOfPrimary)/5 + ((double)Stn.NUmOfSecondary)/10;
     return DangerVal;
 }
 
@@ -17,11 +19,11 @@ void CreateStationsGraph(StructStations *GraphOfStations, int NumOfStations)
     }
 }
 
-void UpdateStnLength(int U, int V, int W, StructStations *GraphOfStations)
+void UpdateStnLength(int U, int V, double W, StructStations *GraphOfStations)
 {
     //assumes that stations U and V exist. so do check before passing
 
-    int arr[2];
+    double arr[2];
     arr[0] = V;
     arr[1] = W;
     
