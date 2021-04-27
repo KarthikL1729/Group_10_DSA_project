@@ -8,12 +8,12 @@ typedef struct vec{
     int cur;
 }vec;
 
-void init(vec *v);  //initialises the vector
-int resize(vec *v, int c);  
-void pb(vec *v, int *val);   //add a pair of integers to the vector
-void set(vec *v, int *val);  //updates value of a present pair
-int get(vec *v, int in);   //returns the second element of the pair if we pass the first element
-void del(vec *v, int in);    //deletes vector element based on first element 
-int fr(vec *v);
+void init_vec(vec *v);  //initialises the vector
+int resize_vec(vec *v, int c);  
+void pb_vec(vec *v, int *val);   //add a pair of integers to the vector
+void set_vec(vec *v, int *val);  //updates value of a present pair
+int get_vec(vec *v, int in);   //returns the second element of the pair if we pass the first element
+void del_vec(vec *v, int in);    //deletes vector element based on first element 
+int fr_vec(vec *v);
 
 #endif
