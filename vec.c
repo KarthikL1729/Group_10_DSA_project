@@ -7,7 +7,8 @@
 
 void init(vec *v)
 {
-    v->a = (int *)malloc(sizeof(int)*SIZE);
+    v->a[0] = (int *)malloc(sizeof(int)*SIZE);
+    v->a[1] = (int*)malloc(sizeof(int)*SIZE);
     v->cap = SIZE;
     v->cur = 0;
     //printf("HERE\n");
@@ -16,69 +17,88 @@ void init(vec *v)
 int resize(vec *v, int c)
 {
     //printf("HEREB\n");
-    int *x = (int *)realloc(v->a, sizeof(int) * c);
+    int *x = (int *)realloc(v->a[0], sizeof(int) * c);
+    int *y = (int*)realloc(v->a[1],sizeof(int)*c);
     //printf("Resizing\n");
-    if(x)
+    if(x && y)
     {
-        v->a = x;
+        v->a[0] = x;
+        v->a[1] = y;
         v->cap = c;
         return 0;
     }
     return -1;
 }
 
-int pb(vec *v, int val)
+void pb(vec *v, int *val)
 {
     if(v->cap == v->cur)
     {
         //printf("Whytf\n");
         resize(v, v->cap*2);
     }
-    v->a[v->cur++] = val;
-    return 0;
+    // v->a[v->cur++] = val;
+    v->a[0][v->cur] = val[0];
+    v->a[1][v->cur] = val[1];
+    v->cur++;
 }
 
-int set(vec *v, int in, int val)
+void set(vec *v, int *val)
 {
-    if(in >= 0 && in < v->cur)
+    //we are searching the vector by the first element.
+    int i=0;
+    for(; i<v->cur; i++)
+        if(v->a[0][i] == val[0])
+            break;
+    
+    if(i<v->cur)
     {
-        v->a[in] = val;
-    }
-    return 0;
+        v->a[0][i] = val[0];
+        v->a[1][i] = val[1];
+    };
 }
 
-int get(vec *v, int in, int val)
+int get(vec *v, int in)
 {
-    if(in >=0 && in < v->cur)
-    {
-        return v->a[in];
-    }
+    //we are searching the vector by the first element.
+
+    for(int i=0; i<v->cur; i++)
+        if(v->a[0][i] == in)
+            return v->a[1][i];
+    
     return -1;
 }
 
-int del(vec *v, int in)
+void del(vec *v, int ToDelete)
 {
-    int i = 0;
-    v->a[in] = 0;
-    for(i = in; i < v->cur - 1; i++)
-    {
-        v->a[i] = v->a[i+1];
-        v->a[i+1] = 0;
-    }
+    //we are searching the vector by the first element.
 
-    v->cur--;
+    int i=0;
+    for(; i<v->cur; i++)
+        if(v->a[0][i] == ToDelete)
+            break;
+
+    if(i<v->cur)
+    {
+        //its enough just to swap the to be deleted element with the last and the decrement capacity
+        v->a[0][i] = v->a[0][v->cur-1];
+        v->a[1][i] = v->a[1][v->cur-1];
+        v->cur--;
+    }
+    else
+        return;
 
     if(v->cur == v->cap/4)
     {
         resize(v, v->cap/2);
     }
-
-    return 0;
 }
+
 int fr(vec *v)
 {
-    free(v->a);
-    v->a = NULL;
+    free(v->a[0]);
+    free(v->a[1]);
+    v = NULL;
     return 0;
 }
 
