@@ -18,11 +18,12 @@ struct StationNode
                                 // It should hold station number and the DangerValue of the connected station  
                                 //It is directed.
     
-    int NumOfPpl;               //Maintains Number of people in station. Required?
+   // int NumOfPpl;               //Maintains Number of people in station. Required?  (not required )
     int NumOfPositive;          //Number of Covid Positive people
     int NumOfPrimary;           //Number of Primary Contacts
     int NUmOfSecondary;         //Number of Secondary Contacts
     double DangerValue;          //DangerValue of the station
+
 
     //int *ListOfPpl;             //Array containing index of the people currently in the station.
                                 //Have to confirm if this is required or not.
