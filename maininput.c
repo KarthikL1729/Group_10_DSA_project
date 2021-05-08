@@ -26,7 +26,7 @@ int main()
     {
         inputRoad(); //Function for taking the inputs to the stations graph. Needs to be updated (Struct station hasn't been defined properly yet).
     }
-
+  
     person arrPerson[K]; //For storing the [ struct person ]  i.e, details about each person
     
     // taking the initial locations of each person in order 

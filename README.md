@@ -2,13 +2,15 @@
 
 ### General idea
 
- Declare a struct person array, consisting of a vector of pairs(defined by us) of people he/she meets and the day they meet, current station, current status.
+ Declare a struct person array, consisting of a vector of pairs(defined by us) of people he/she meets and the day they meet, current station, current status, and the day he/she tested positive (If applicable. By default, would be initialised to -1).
 
- If a person in the meet array has a meet date that is > 14 days before the current day, that entry will be dleted, as that person's status will not change.
+ If a person in the meet array has a meet date that is > 14 days before the current day, that entry will be deleted, as that person's status will not change.
 
  Update status, station and meet vector depending on the day and data given.
 
  Maintain stations as a graph (Mainly for q2, to calculate the safety values (take top three) and implement Dijkstra to find shortest path).
+
+ Indexing starts from zero (for the person indices) (info for the user giving the inputs).
 
 ### Q1 specific 
 
@@ -16,7 +18,7 @@ List L has people who TESTED positive on that day D.
 
 We have to check the primary and secondary contacts of that person for the past X days.
 
-People on list L have no MOVEMENT from their station for 14 days. (They stay in their current station, i.e. where they tested positive).
+People on list L have no MOVEMENT from their station for 14 days. (They stay in their current station, i.e. where they tested positive). (In q2, run a check : If the person asked to travel is currently quarantined, display an error message.)
 
  In list L for task 1, we need
 
