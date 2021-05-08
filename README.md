@@ -50,34 +50,52 @@ People on list L have no MOVEMENT from their station for 14 days. (They stay in 
 
  We will create a menu driven code for this, which accepts a person's index and the query, and fucntions accordingly
 
+
+
 ### Q3 p1 (status)
+input format: 
+    int DAY , int INDEX  
+Output format: 
+    string representing the status of the person of index "INDEX" on day "DAY"
+
+Note: DAY should not be less than the status alloted day
 
 ### Pseudocode p1
 ```c++
  access index of that person, in array
  cout<<status<<;
 ```
-### Q3 p2
+### Q3 p2 (location)
+input format: 
+    int INDEX
+Output format:
+    int current_station of the person with index "INDEX"
 
 ### Pseudocode p2
 ```c++
  access index of person
  cout<<cur_station;
 ```
-### Q3 p3
+### Q3 p3  (info regarding persons in a station )
+input format:
+    int DAY , int STATION_NUM
+output format:
+    list of the [positive , primaryContact , secondaryContact , Negative] persons in the station "STATION_NUM"  in order 
+
+NOTE: DAY should not be less than the status alloted day
 
 ### Pseudocode p3
 ```c++
+person* list;
  for(in person array)
  {
     if(in the station)
     {
-        if(stat == 1/2(primary/secondary))
-        {
-            cout<<that guy/girl;
-        }
-       else
-            continue;
+        Add to list ;
+
     }
  }
+    qsort ( list);
+printf ( list ) ; 
+
  ```

@@ -3,7 +3,7 @@
 
 typedef struct vec{
     double *a[2]; //First element is person's ID, second is day they met.
-               //First element is Station number second is the length/ DangerVal
+               //First element is Station numger second is the length/ DangerVal
     int cap;
     int cur;
 }vec;
