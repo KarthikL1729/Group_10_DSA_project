@@ -1,5 +1,6 @@
 #include<stdio.h>
 
+#include "prelims.h"
 int main()
 {
     int N,M,K; //N , M , K, denoting number of stations, number of

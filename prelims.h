@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "vec.h"
+
 typedef struct person{
     vec meet; //
     /*No secondary vector, as the primary vector of 
