@@ -26,7 +26,12 @@ int main()
     {
         inputRoad(); //Function for taking the inputs to the stations graph. Needs to be updated (Struct station hasn't been defined properly yet).
     }
+<<<<<<< HEAD
+
+<<<<<<< HEAD
+=======
   
+>>>>>>> 798b64e0a41c8ba792b000423493229bb4d667ff
     person arrPerson[K]; //For storing the [ struct person ]  i.e, details about each person
     
     // taking the initial locations of each person in order 
@@ -35,6 +40,16 @@ int main()
     for (int i = 0; i < K; i++)
     {
         scanf("%d", &arrPerson[i].cur_station);
+<<<<<<< HEAD
+=======
+    person arrPerson[K]; 
+
+    for(int i=0;i<K;i++)
+    {   
+        scanf("%d",&arrPerson[i].cur_station);
+>>>>>>> 947f7f56ecfb107188e4b8bf8a095e7f48ae9b31
+=======
+>>>>>>> 798b64e0a41c8ba792b000423493229bb4d667ff
     }
 
     int selectTask = -1;
