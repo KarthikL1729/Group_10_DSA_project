@@ -5,7 +5,7 @@ void swap(pair *a, pair *b)
 {
     pair t = *a;
     *a = *b;
-    *b = *t;
+    *b = t;
 }
 
 heap *init(int s)
@@ -38,7 +38,7 @@ void move_up(heap *h, int in)
 {
     if (h->a[in].danger >= h->a[(in - 1) / 2].danger)
         return;
-    swap(&h->a[in], &h->a[(in - 1) / 2])
+    swap(&h->a[in], &h->a[(in - 1) / 2]);
         move_up(h, (in - 1) / 2); //Recursively moving up if condition is satisfied
 }
 
@@ -104,7 +104,7 @@ heap *heapify(pair *a, int s, int n)
 
         return heap;
     }
-
+ 
     else
         return;
 }
