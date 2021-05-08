@@ -13,13 +13,11 @@ int main()
         inputRoad();     //Function for taking the inputs to the stations graph. Needs to be updated (Struct station hasn't been defined properly yet).
     }
 
-    person arrPerson[K]; //For storing the initial stations of the people, to be used in conjunction with the initStation array.
-    int initStation[K]; //For storing the initial stations of the people, to be used in conjunction with the arrPerson array. 
+    person arrPerson[K]; 
 
     for(int i=0;i<K;i++)
     {   
-        scanf("%d",&initStation[i]);
-        arrPerson[i].cur_station = initStation[i];
+        scanf("%d",&arrPerson[i].cur_station);
     }
 
     int selectTask=-1;
