@@ -44,7 +44,7 @@ int main()
                 scanf("%d",&listPostive[i]);
             }
 
-            Task1(listPostive,X,D); //Needs to be defined.
+            Task1(listPostive,numPositive,arrPerson,X,D,K); //Needs to be defined.
         }
 
         if(selectTask == 2)
