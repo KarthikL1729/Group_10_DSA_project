@@ -1,3 +1,6 @@
+//This file is no more required.
+
+
 #include <stdio.h>
 #include "prelims.h"
 #include "dynamicheap.h"
@@ -25,7 +28,7 @@ bool InQuarantine(int day, int PID, person *arrPerson)
 
 
 
-Task
+int main()
 {
     StructStations StationGraph;        //This is to be removed. It will be there in the main() or global (whatever)
 

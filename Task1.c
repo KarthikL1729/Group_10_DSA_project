@@ -12,6 +12,7 @@ void Task1(int listPositive[], int numPositive, person *arrPerson, int X, int D,
         arrPerson[listPositive[i]].status = 3;
         arrPerson[listPositive[i]].day = D;
 
+
         if (arrPerson[listPositive[i]].meet.cur == 0)
         {
             printf("No Primary Contacts of Person %d\n\n", listPositive[i]);
