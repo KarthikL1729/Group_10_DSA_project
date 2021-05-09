@@ -2,10 +2,30 @@
 #include <stdlib.h>
 
 #include "prelims.h"
+#include "Stations.h"
+#include "dynamicheap.h"
 
 /////////////task 3 /////////
 int task3sort(const void *a, const void *b)  {   return ((*((person **)b))->status - (*((person **)a))->status);  }
 /////// end of task 3 //////////////////
+
+//task2//
+void DijkstraQ2(int starting,int ending,StructStations *StationGraph);
+
+struct StnForDijkstra
+{
+    double danger;
+    int prev;
+    bool DangerConfirm;
+};
+typedef struct StnForDijkstra StnForDijkstra;
+
+//end//
+
+
+
+
+
 
 int main()
 {
@@ -18,6 +38,14 @@ int main()
     int TimeD; // this keeps track of the Time / Day in the process
     // TimeD must not take a value less than a value that has already been given
     // it should be continously increasing
+
+    //Task2 variables
+    int PID, starting, ending;
+    StructStations StationGraph;
+    StationGraph.NumOfStations = N;
+    StationGraph.Stations = (StationNode*)malloc(sizeof(StationNode)*N);
+
+
 
     printf("Input three integers denoting number of stations, number of roads and number of people respectively...\n");
     scanf("%d %d %d", &N, &M, &K);
@@ -65,7 +93,18 @@ int main()
 
         if (selectTask == 2) 
         {
-            inputTask2();
+            printf("Enter Day number and person ID: ");
+            scanf("%d%d",&TimeD,&PID);
+            
+            if(InQuarantine(TimeD,PID,arrPerson) == true)
+                printf("Person is under Quarantine. Cannot travel\n");
+            else
+            {
+                starting = arrPerson[PID].cur_station;     
+                printf("Enter destination station number: ");
+                scanf("%d",&ending);
+                DijkstraQ2(starting,ending,&StationGraph);
+            }
         }
 
         if (selectTask == 3)   //  other queries ( as mentioned in the pdf )
@@ -215,5 +254,202 @@ int main()
         */
     }
 
+    free(StationGraph.Stations);
+
     return 0;
 }
+
+
+void DijkstraQ2(int starting,int ending,StructStations *StationGraph)
+{
+    int BestPaths[3][StationGraph->NumOfStations];       //stores the bestpaths from starting to ending station
+    BestPaths[0][0] = -1;                               //the first column will hold number of stations in path
+    BestPaths[1][0] = -1;
+    BestPaths[2][0] = -1;
+    double BestDangerValues[3];
+    
+
+    int DangerousStartIndex = -1;         //Index of most dangerous station in previous path
+    int DangerousEndIndex = -1;           //relavant only after first iteration
+
+    int DangerousStart2 = -1;           
+    int DangerousEnd2 = -1;
+
+    for(int count = 0; count <3; count++)
+    {
+        int NumStnConfirm = 0;
+
+        StnForDijkstra DijkstraArr[StationGraph->NumOfStations];
+        for(int i=0; i<StationGraph->NumOfStations; i++)
+        {
+            DijkstraArr[i].danger = -1;
+            DijkstraArr[i].prev = -1;
+            DijkstraArr[i].DangerConfirm = false;
+        }
+
+        heap *PathPriorityQ = init(StationGraph->NumOfStations/2);     //NumStations/2 just arbitrarily
+
+        DijkstraArr[starting].danger = 0;
+        DijkstraArr[starting].prev = starting;
+        NumStnConfirm++;
+
+        for(int i=0; i<StationGraph->Stations[starting].StnDanger.cur; i++)
+        {
+            int index = StationGraph->Stations[starting].StnDanger.a[0][i];
+
+            //Ignoring the heaviest edge of previous path
+            if(DangerousStartIndex == starting && DangerousEndIndex == index)
+                continue;
+
+            DijkstraArr[index].danger = StationGraph->Stations[starting].StnDanger.a[1][i];
+            DijkstraArr[index].prev = starting;
+    
+
+            //adding to Priority Queue
+            pair *temp = (pair*)malloc(sizeof(pair));
+            temp->danger = StationGraph->Stations[starting].StnDanger.a[1][i];
+            temp->ind = index; 
+            push(PathPriorityQ,*temp);
+        }
+
+
+        while (1)
+        {
+            pair minPath = ExtractMin(PathPriorityQ);
+            int current = minPath.ind;
+
+            //Queue empty
+            if(current == -1)
+                break;   
+
+
+            //All stations have already least danger path
+            if(NumStnConfirm == StationGraph->NumOfStations)
+                break;
+
+            //This station has already been visited
+            if(DijkstraArr[current].DangerConfirm == true)
+                continue;
+
+            DijkstraArr[current].DangerConfirm = true;
+            NumStnConfirm++;
+
+            //traversing through current station's adjacency list
+            for(int i=0; i<StationGraph->Stations[current].StnDanger.cur; i++)
+            {
+                int index = StationGraph->Stations[current].StnDanger.a[0][i];
+                double indDanger = StationGraph->Stations[current].StnDanger.a[1][i];
+                
+                //skipping heaviest edge
+                if(current == DangerousStartIndex && index == DangerousEndIndex)
+                    continue;
+
+                if(DijkstraArr[index].DangerConfirm == true)
+                    continue;
+
+                if((DijkstraArr[index].danger > DijkstraArr[current].danger + indDanger) || DijkstraArr[index].danger == -1)
+                {
+                    DijkstraArr[index].danger = indDanger + DijkstraArr[current].danger;
+                    DijkstraArr[index].prev = current;
+
+                    pair *temp = (pair*)malloc(sizeof(pair));
+                    temp->danger = indDanger;
+                    temp->ind = index;
+
+                    push(PathPriorityQ,*temp);
+                }
+            }
+        }
+
+        //No route exists from starting to ending station
+        if(DijkstraArr[ending].danger == -1)
+            break;
+        
+        BestDangerValues[count] = DijkstraArr[ending].danger;
+
+        double DangerousEdge = -1;
+
+        int pathtemp = ending;
+        int idk = 1;
+        while (pathtemp != starting)
+        {
+            if(DijkstraArr[pathtemp].danger > DangerousEdge)
+            {
+                DangerousEndIndex = pathtemp;
+                DangerousStartIndex = DijkstraArr[pathtemp].prev;
+                DangerousEdge = DijkstraArr[pathtemp].danger;
+            }
+            
+            //adding path in array but in reverse order
+            BestPaths[count][idk] = pathtemp;
+            idk++;
+
+            pathtemp = DijkstraArr[pathtemp].prev;
+        }
+        BestPaths[count][idk] = starting;
+        BestPaths[count][0] = idk;
+    }  
+
+
+    //reverse order of paths
+    for(int i=0; i<3; i++)
+    {
+        for(int j=1; j<=BestPaths[i][0]/2; j++)
+        {
+            int temp = BestPaths[i][j];
+            BestPaths[i][j] = BestPaths[i][BestPaths[i][0] - j + 1];
+            BestPaths[i][BestPaths[i][0] - j + 1] = temp;
+        }
+    }
+
+
+    //Need to sort the paths based on length if danger values are equal
+    //yet to do
+
+    for(int i=0; i<3; i++)
+    {
+        if(BestPaths[i][0] == -1)
+            break;
+        printf("Path %d\n",i);
+        printf("Danger Value: %ld\n",BestDangerValues[i]);
+        printf("Path:\n");
+        for(int j = 1; j< BestPaths[i][0]; j++ )
+            printf("%d<--",BestPaths[i][j]);
+        printf("%d\n\n",BestPaths[i][BestPaths[i][0]]);
+    }
+    
+    char ch;
+    do
+    {
+        printf("Do you want to travel? (y/n)\n");
+        scanf("%c",&ch);
+    }while(ch != 'y' || ch!= 'Y' || ch != 'n' || ch != 'N');
+
+    int x;
+
+    if(ch == 'n' || ch == 'N')
+    {
+        printf("Good Choice! Dont travel unnecesarily. Stay home Stay safe!\n\n");
+        return 0;   //exit from Q2
+    }
+    else
+    {
+        bool flag = true;
+        do 
+        {
+            printf("Choose which path you want to take:\n");
+            scanf("%d",&x);
+            x--; 
+            if(x > 2 || BestPaths[x][0] == -1)
+                printf("Invalid\n");
+            else flag = false;
+        }while(flag);
+    }
+}
+
+/*
+1. Taking input for stngraph
+2. heaviest edge no2
+3. update the meet list
+4. Testing
+*/
