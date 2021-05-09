@@ -15,7 +15,17 @@ struct StnForDijkstra
 };
 typedef struct StnForDijkstra StnForDijkstra;
 
-int main()
+bool InQuarantine(int day, int PID, person *arrPerson)
+{
+    if(arrPerson[PID].status == 3)
+    {
+        if(arrPerson[PID].day)
+    }
+}
+
+
+
+Task
 {
     StructStations StationGraph;        //This is to be removed. It will be there in the main() or global (whatever)
 
@@ -23,7 +33,11 @@ int main()
     printf("Enter person ID: ");
     scanf("%d",&PID);
 
-    if(InQuarantine(PID) == true)
+    printf("Enter Day number\n");
+    int TimeD;
+    scanf("%d",&TimeD);
+
+    if(InQuarantine(TimeD,PID,) == true)
     {
         printf("Person is under Quarantine. Cannot travel\n");
         return 0;   //exit from the query
