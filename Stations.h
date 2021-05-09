@@ -29,7 +29,7 @@ struct StationNode
                                 //Have to confirm if this is required or not.
 };                          
 
-double CalculateDangerValue(StationNode Stn);      //Returns DangerValue of the station
+double CalculateDangerValue(StationNode* Stn);      //Returns DangerValue of the station
 
 
 struct StructStations

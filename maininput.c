@@ -5,8 +5,8 @@
 
 #include "vec.c"
 //#include "prelims.h"
-#include "Stations.h"
-// #include "dynamicheap.h"
+#include "Stations.c"
+#include "dynamicheap.c"
 
 /////////////task 3 /////////
 int task3sort(const void *a, const void *b) { return ((*((person **)b))->status - (*((person **)a))->status); }
@@ -14,24 +14,39 @@ int task3sort(const void *a, const void *b) { return ((*((person **)b))->status 
 
 //task2//
 
-int* DijkstraQ2(int starting,int ending,StructStations *StationGraph);
+int *DijkstraQ2(int starting, int ending, StructStations *StationGraph);
 
 //void inputRoad(int M, StructStations StationGraph);
 
 void inputRoad(int M, StructStations *StationGraph)
 {
+    for (int i = 0; i < StationGraph->NumOfStations; i++)
+    {   
+        init_vec(&StationGraph->Stations[i].StnLength );
+        init_vec(&StationGraph->Stations[i].StnDanger );
+        StationGraph->Stations[i].DangerValue = 0;
+        StationGraph->Stations[i].NumOfPositive = 0;
+        StationGraph->Stations[i].NumOfPrimary = 0;
+        StationGraph->Stations[i].NUmOfSecondary = 0;   
+    }
 
     // inputs are U ,V and W
     double u[2] = {0}, v[2] = {0};
+    //double a[2] = {0} , b[2] = {0};
     for (int i = 0; i < M; i++)
     {
-
+        
         scanf("%lf %lf %lf", &u[0], &v[0], &v[1]);
         u[1] = v[1];
-
         pb_vec(&(*StationGraph).Stations[(int)u[0]].StnLength, v);
         pb_vec(&(*StationGraph).Stations[(int)v[0]].StnLength, u);
+
+        u[1] = v[1] = 0;
+        pb_vec(&(*StationGraph).Stations[(int)u[0]].StnDanger, v);
+        pb_vec(&(*StationGraph).Stations[(int)v[0]].StnDanger, u);
     }
+
+    
 }
 
 void printstat(int N, StructStations *StationGraph) // only for debugging
@@ -54,6 +69,9 @@ void initialMeet(person *arrPerson, int K)
     // O(k^2)
     for (int i = 0; i < K; i++)
     {
+        arrPerson[i].status = 0;
+        init_vec(&arrPerson[i].meet);
+
         for (int j = 0; j < K; j++)
         {
 
@@ -146,12 +164,11 @@ struct StnForDijkstra
 };
 typedef struct StnForDijkstra StnForDijkstra;
 
-
 //This will return the length to end station in the adj list
 double RetLength(vec Adj, int end)
-{
-    for(int i=0; i<Adj.cur; i++)
-        if(Adj.a[0][i] == end)
+{  
+    for (int i = 0; i < Adj.cur; i++)
+        if (Adj.a[0][i] == end)
             return Adj.a[1][i];
 }
 
@@ -160,9 +177,46 @@ double RetLength(vec Adj, int end)
 //It is an O(N*K)worst case. basically order of Number of people * Number of stations in the path.
 void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int day);
 
+void UpdateStatGraph(StructStations *StationGraph, person *arrPerson, int K)
+{
+
+    //O(k)
+    for (int i = 0; i < K; i++)
+    {
+
+        if (arrPerson[i].status == 3)
+        {
+
+            StationGraph->Stations[arrPerson[i].cur_station].NumOfPositive++;
+        }
+        else if (arrPerson[i].status == 2)
+        {
+            StationGraph->Stations[arrPerson[i].cur_station].NumOfPrimary++;
+        }
+        else if (arrPerson[i].status == 1)
+        {
+            StationGraph->Stations[arrPerson[i].cur_station].NUmOfSecondary++;
+        }
+    }
+
+    for (int i = 0; i < StationGraph->NumOfStations; i++)
+    {
+        StationGraph->Stations[i].DangerValue = CalculateDangerValue(&StationGraph->Stations[i]);
+    }
+
+    for (int i = 0; i < StationGraph->NumOfStations; i++)
+    {
+
+        for (int j = 0; j < StationGraph->Stations[i].StnDanger.cur; j++)
+        {
+
+            //StationGraph->Stations[i].StnDanger.a[1][j] = CalculateDangerValue (&StationGraph->Stations[(int)StationGraph->Stations[i].StnDanger.a[0][j]] );
+            StationGraph->Stations[i].StnDanger.a[1][j] = StationGraph->Stations[(int)StationGraph->Stations[i].StnDanger.a[0][j]].DangerValue;
+        }
+    }
+}
+
 //end//
-
-
 
 int main()
 {
@@ -200,7 +254,8 @@ int main()
     }
 
     initialMeet(arrPerson, K);
-    //printMeetList(arrPerson,K);
+
+    //printMeetList(arrPerson, K);
 
     int selectTask = -1;
 
@@ -230,12 +285,13 @@ int main()
             Task1(listPostive, numPositive, arrPerson, X, TimeD, K); //Needs to be defined.
         }
 
-        /*
         if (selectTask == 2)
         {
+
             printf("Enter Day number and person ID: ");
             scanf("%d%d", &TimeD, &PID);
 
+            UpdateStatGraph(&StationGraph, arrPerson, K);
             if (InQuarantine(TimeD, PID, arrPerson) == true)
                 printf("Person is under Quarantine. Cannot travel\n");
             else
@@ -243,23 +299,24 @@ int main()
                 starting = arrPerson[PID].cur_station;
                 printf("Enter destination station number: ");
 
-                scanf("%d",&ending);
-                int *ptr = DijkstraQ2(starting,ending,&StationGraph);
-                if(*ptr == -1)
+                scanf("%d", &ending);
+                int *ptr = DijkstraQ2(starting, ending, &StationGraph);
+                if (*ptr == -1)
                 {
                     ;
                     //Person doesn't want to travel.
                     //Do nothing
                 }
                 else
-                    UpdateMeet(ptr,PID,arrPerson,K,TimeD);
-                
-                //End of task 2                
+                {
+                    UpdateMeet(ptr, PID, arrPerson, K, TimeD);
+                    arrPerson[PID].cur_station = ending;
+                }
 
-
+                //End of task 2
             }
         }
-*/
+
         if (selectTask == 3) //  other queries ( as mentioned in the pdf )
         {
             int selectTask3;
@@ -405,6 +462,10 @@ int main()
                 }
             }
             */
+        if (selectTask == 5)
+        {
+            printMeetList(arrPerson, K);
+        }
     }
 
     free(StationGraph.Stations);
@@ -413,9 +474,7 @@ int main()
     return 0;
 }
 
-
-
-int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
+int *DijkstraQ2(int starting, int ending, StructStations *StationGraph)
 
 {
     int BestPaths[3][StationGraph->NumOfStations]; //stores the bestpaths from starting to ending station
@@ -453,7 +512,7 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
             int index = StationGraph->Stations[starting].StnDanger.a[0][i];
 
             //Ignoring the heaviest edge of the 1st path and the second path (when relevant)
-            if((DangerousStartIndex == starting && DangerousEndIndex == index) || (DangerousStart2 == starting && DangerousEnd2 == index))
+            if ((DangerousStartIndex == starting && DangerousEndIndex == index) || (DangerousStart2 == starting && DangerousEnd2 == index))
 
                 continue;
 
@@ -495,9 +554,7 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
 
                 //skipping heaviest edge
 
-                if((current == DangerousStartIndex && index == DangerousEndIndex) || (DangerousStart2 == current && DangerousEnd2 == index))
-
-               
+                if ((current == DangerousStartIndex && index == DangerousEndIndex) || (DangerousStart2 == current && DangerousEnd2 == index))
 
                     continue;
 
@@ -564,28 +621,26 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
     //Need to sort the paths based on length if danger values are equal
     //yet to do
 
-
     // StationGraph->Stations[i].Stn
 
     int best1 = 0, best2 = 1, best3 = 2;
 
     int length1 = 0, length2 = 0, length3 = 0;
-    if((BestDangerValues[0] == BestDangerValues[1]) && BestDangerValues[1] == BestDangerValues[2])  //all 3 equal
+    if ((BestDangerValues[0] == BestDangerValues[1]) && BestDangerValues[1] == BestDangerValues[2]) //all 3 equal
     {
-        for(int i=0; i< BestPaths[0][0]; i++)
-            length1 += RetLength(StationGraph->Stations[BestPaths[0][i]].StnLength,BestPaths[0][i+1]);
-        for(int i = 0; i<BestPaths[1][0]; i++)
-            length2+= RetLength(StationGraph->Stations[BestPaths[1][i]].StnLength,BestPaths[1][0]);
-        for(int i = 0; i<BestPaths[2][0]; i++)
-            length3+= RetLength(StationGraph->Stations[BestPaths[2][i]].StnLength,BestPaths[2][0]);
+        for (int i = 0; i < BestPaths[0][0]; i++)
+            length1 += RetLength(StationGraph->Stations[BestPaths[0][i]].StnLength, BestPaths[0][i + 1]);
+        for (int i = 0; i < BestPaths[1][0]; i++)
+            length2 += RetLength(StationGraph->Stations[BestPaths[1][i]].StnLength, BestPaths[1][0]);
+        for (int i = 0; i < BestPaths[2][0]; i++)
+            length3 += RetLength(StationGraph->Stations[BestPaths[2][i]].StnLength, BestPaths[2][0]);
 
-
-        if(length1 > length2)
+        if (length1 > length2)
         {
-            if(length1 > length3)
+            if (length1 > length3)
             {
                 best3 = 0;
-                if(length2> length3)
+                if (length2 > length3)
                     best1 = 2;
                 else
                 {
@@ -601,9 +656,9 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
         }
         else
         {
-            if(length3 < length2)
+            if (length3 < length2)
             {
-                if(length3<length1)
+                if (length3 < length1)
                 {
                     best1 = 2;
                     best2 = 0;
@@ -617,31 +672,29 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
                 }
             }
         }
-
-
     }
-  
-    if(BestDangerValues[0] == BestDangerValues[1])
-    {
-        for(int i=0; i< BestPaths[0][0]; i++)
-            length1 += RetLength(StationGraph->Stations[BestPaths[0][i]].StnLength,BestPaths[0][i+1]);
-        for(int i = 0; i<BestPaths[1][0]; i++)
-            length2+= RetLength(StationGraph->Stations[BestPaths[1][i]].StnLength,BestPaths[1][0]);
 
-        if(length1 > length2)
+    if (BestDangerValues[0] == BestDangerValues[1])
+    {
+        for (int i = 0; i < BestPaths[0][0]; i++)
+            length1 += RetLength(StationGraph->Stations[BestPaths[0][i]].StnLength, BestPaths[0][i + 1]);
+        for (int i = 0; i < BestPaths[1][0]; i++)
+            length2 += RetLength(StationGraph->Stations[BestPaths[1][i]].StnLength, BestPaths[1][0]);
+
+        if (length1 > length2)
         {
             best1 = 1;
             best2 = 0;
         }
     }
-    if((BestDangerValues[1] == BestDangerValues[2]) && (BestDangerValues[1] == -1))
+    if ((BestDangerValues[1] == BestDangerValues[2]) && (BestDangerValues[1] == -1))
     {
-        for(int i = 0; i<BestPaths[1][0]; i++)
-            length2+= RetLength(StationGraph->Stations[BestPaths[1][i]].StnLength,BestPaths[1][0]);
-        for(int i = 0; i<BestPaths[2][0]; i++)
-            length3+= RetLength(StationGraph->Stations[BestPaths[2][i]].StnLength,BestPaths[2][0]);
+        for (int i = 0; i < BestPaths[1][0]; i++)
+            length2 += RetLength(StationGraph->Stations[BestPaths[1][i]].StnLength, BestPaths[1][0]);
+        for (int i = 0; i < BestPaths[2][0]; i++)
+            length3 += RetLength(StationGraph->Stations[BestPaths[2][i]].StnLength, BestPaths[2][0]);
 
-        if(length2 > length3)
+        if (length2 > length3)
         {
             best3 = 1;
             best2 = 2;
@@ -650,33 +703,33 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
 
     //Printing the 3 paths:
 
-    printf("Path %d\n",1);
-    printf("Danger Value: %ld\n",BestDangerValues[best1]);
+    printf("Path %d\n", 1);
+    printf("Danger Value: %lf\n", BestDangerValues[best1]);
     printf("Path:\n");
-    for(int j = 1; j< BestPaths[best1][0]; j++ )
-        printf("%d<--",BestPaths[best1][j]);
-    printf("%d\n\n",BestPaths[best1][BestPaths[best1][0]]);
+    for (int j = 1; j < BestPaths[best1][0]; j++)
+        printf("%d-->", BestPaths[best1][j]);
+    printf("%d\n\n", BestPaths[best1][BestPaths[best1][0]]);
 
-    if(BestPaths[best2][0] != -1)
+    if (BestPaths[best2][0] != -1)
     {
-        printf("Path %d\n",2);
-        printf("Danger Value: %ld\n",BestDangerValues[best2]);
+        printf("Path %d\n", 2);
+        printf("Danger Value: %lf\n", BestDangerValues[best2]);
         printf("Path:\n");
-        for(int j = 1; j< BestPaths[best2][0]; j++ )
-            printf("%d<--",BestPaths[best2][j]);
-        printf("%d\n\n",BestPaths[best2][BestPaths[best2][0]]);
+        for (int j = 1; j < BestPaths[best2][0]; j++)
+            printf("%d-->", BestPaths[best2][j]);
+        printf("%d\n\n", BestPaths[best2][BestPaths[best2][0]]);
     }
 
-    if(BestPaths[best3][0] != -1)
+    if (BestPaths[best3][0] != -1)
     {
-        printf("Path %d\n",3);
-        printf("Danger Value: %ld\n",BestDangerValues[best3]);
+        printf("Path %d\n", 3);
+        printf("Danger Value: %lf\n", BestDangerValues[best3]);
         printf("Path:\n");
-        for(int j = 1; j< BestPaths[best3][0]; j++ )
-            printf("%d<--",BestPaths[best3][j]);
-        printf("%d\n\n",BestPaths[best3][BestPaths[best3][0]]);
+        for (int j = 1; j < BestPaths[best3][0]; j++)
+            printf("%d-->", BestPaths[best3][j]);
+        printf("%d\n\n", BestPaths[best3][BestPaths[best3][0]]);
 
-  /*   
+        /*   
     for (int i = 0; i < 3; i++)
     {
         if (BestPaths[i][0] == -1)
@@ -688,15 +741,15 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
             printf("%d<--", BestPaths[i][j]);
         printf("%d\n\n", BestPaths[i][BestPaths[i][0]]);
         */
-
     }
 
-    char ch;
-    do
+    char ch = 0;
+
+    printf("Do you want to travel? (y/n)\n");
+    while (ch != 'y' && ch != 'Y' && ch != 'n' && ch != 'N' /*&& printf("invalid\n")*/)
     {
-        printf("Do you want to travel? (y/n)\n");
         scanf("%c", &ch);
-    } while (ch != 'y' || ch != 'Y' || ch != 'n' || ch != 'N');
+    }
 
     int x;
 
@@ -704,11 +757,10 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
     {
         printf("Good Choice! Dont travel unnecesarily. Stay home Stay safe!\n\n");
 
-        int *retArr = (int*)malloc(sizeof(int));
+        int *retArr = (int *)malloc(sizeof(int));
         *retArr = -1;
         return retArr;
-       // return 0; //exit from Q2
-
+        // return 0; //exit from Q2
     }
     else
     {
@@ -717,80 +769,98 @@ int* DijkstraQ2(int starting,int ending,StructStations *StationGraph)
         {
 
             printf("Choose which path you want to take (Zero based indexing):\n");
-            scanf("%d",&x);
-            if(x == 0)
+            scanf("%d", &x);
+            if (x == 0)
                 x = best1;
-            else if (x == 1) x = best2;
-            else if (x == 2) x = best3;
+            else if (x == 1)
+                x = best2;
+            else if (x == 2)
+                x = best3;
 
-            if(x > 2 || BestPaths[x][0] == -1)
+            if (x > 2 || BestPaths[x][0] == -1)
 
-           
                 printf("Invalid\n");
             else
                 flag = false;
         } while (flag);
     }
 
-    int *retArr = (int*)malloc(sizeof(int)*(BestPaths[x][0] + 1));
-    for(int i=0; i<=BestPaths[x][0]; i++)
+    int *retArr = (int *)malloc(sizeof(int) * (BestPaths[x][0] + 1));
+    for (int i = 0; i <= BestPaths[x][0]; i++)
         retArr[i] = BestPaths[x][i];
 
     return retArr;
 }
 
-
-
 void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int day)
 {
     //skipping the starting station as they should already be in the meet list
-    for(int i=2; i<=PathArr[0]; i++)
+    for (int i = 2; i <= PathArr[0]; i++)
     {
-        for(int j = 0; j<NumOfPersons; j++)
+        for (int j = 0; j < NumOfPersons; j++)
         {
             //The person is in the station
-            if(PersonArr[j].cur_station == PathArr[i])
+            if (PersonArr[j].cur_station == PathArr[i])
             {
-                if(PersonArr[j].status == 3)    //j is under quarantine
+                if (PersonArr[j].status == 3) //j is under quarantine
                 {
-                    if(day - PersonArr[j].day > 14) //if j has already been in quarantine for > 14 days, make j negative
-                        PersonArr[j].status = 0;    
+                    if (day - PersonArr[j].day > 14) //if j has already been in quarantine for > 14 days, make j negative
+                        PersonArr[j].status = 0;
                     else
-                        continue;               //Otherwise j cant be met. so skip.
+                        continue; //Otherwise j cant be met. so skip.
                 }
-                
+
                 //adding into meetlist of person already in the station
-                double *val = (double*)malloc(sizeof(double)*2);
+                double *val = (double *)malloc(sizeof(double) * 2);
                 val[0] = PID;
                 val[1] = day;
-                pb_vec(&(PersonArr[j].meet),val);
+
+                if (get_vec(&(PersonArr[j].meet), val[0]) == -1)
+                {
+                    pb_vec(&(PersonArr[j].meet), val);
+                }
+                else
+                {
+
+                    set_vec(&(PersonArr[j].meet), val);
+                }
 
                 //adding into meet list of person who is travelling
-                double *val2 = (double*)malloc(sizeof(double)*2);
+                double *val2 = (double *)malloc(sizeof(double) * 2);
                 val2[0] = j;
                 val2[1] = day;
-                pb_vec(&(PersonArr[PID].meet),val2);
 
-                if(PersonArr[PID].status > PersonArr[j].status)  
+                if (get_vec(&(PersonArr[PID].meet), val2[0]) == -1)
                 {
-                    if(PersonArr[PID].status == 2)  //PID is primary
+                    pb_vec(&(PersonArr[PID].meet), val2);
+                }
+                else
+                {
+
+                    set_vec(&(PersonArr[PID].meet), val2);
+                }
+
+                // setting the status of both of them to max of both
+                if (PersonArr[PID].status > PersonArr[j].status)
+                {
+                    if (PersonArr[PID].status == 2) //PID is primary
                         PersonArr[j].status = 1;    //set to secondary
                 }
                 else
                 {
-                    if(PersonArr[j].status == 2)    //j is Primary
-                        PersonArr[PID].status = 1;  //set to secondary
-                }   
-                
+                    if (PersonArr[j].status == 2)  //j is Primary
+                        PersonArr[PID].status = 1; //set to secondary
+                }
+
+               /* for ( int l =0 ; l<PersonArr[PID].meet.cur ; l++ )
+                { 
+                    printf ( "%.0lf %.0lf\n" , PersonArr[PID].meet.a[0][l] ,PersonArr[PID].meet.a[1][l]);
+                }
+                */
             }
         }
     }
 }
-
-
-
-
-
 
 /*
 1. Taking input for stngraph
@@ -802,4 +872,3 @@ void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int 
 
 
 */
-

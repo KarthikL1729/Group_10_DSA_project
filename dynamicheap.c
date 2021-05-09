@@ -2,6 +2,8 @@
 #include <limits.h>
 #include "dynamicheap.h"
 
+#include  <stdlib.h>
+
 void swap(pair *a, pair *b)
 {
     pair t = *a;

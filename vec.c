@@ -58,7 +58,7 @@ void set_vec(vec *v, double *val)
     };
 }
 
-double get_vec(vec *v, int in)
+double get_vec(vec *v, double in)
 {
     //we are searching the vector by the first element.
 
