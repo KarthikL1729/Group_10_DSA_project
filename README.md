@@ -2,13 +2,15 @@
 
 ### General idea
 
- Declare a struct person array, consisting of a vector of pairs(defined by us) of people he/she meets and the day they meet, current station, current status.
+ Declare a struct person array, consisting of a vector of pairs(defined by us) of people he/she meets and the day they meet, current station, current status, and the day he/she tested positive (If applicable. By default, would be initialised to -1).
 
- If a person in the meet array has a meet date that is > 14 days before the current day, that entry will be dleted, as that person's status will not change.
+ If a person in the meet array has a meet date that is > 14 days before the current day, that entry will be deleted, as that person's status will not change.
 
  Update status, station and meet vector depending on the day and data given.
 
  Maintain stations as a graph (Mainly for q2, to calculate the safety values (take top three) and implement Dijkstra to find shortest path).
+
+ Indexing starts from zero (for the person indices) (info for the user giving the inputs).
 
 ### Q1 specific 
 
@@ -16,7 +18,7 @@ List L has people who TESTED positive on that day D.
 
 We have to check the primary and secondary contacts of that person for the past X days.
 
-People on list L have no MOVEMENT from their station for 14 days. (They stay in their current station, i.e. where they tested positive).
+People on list L have no MOVEMENT from their station for 14 days. (They stay in their current station, i.e. where they tested positive). (In q2, run a check : If the person asked to travel is currently quarantined, display an error message.)
 
  In list L for task 1, we need
 
@@ -50,34 +52,52 @@ People on list L have no MOVEMENT from their station for 14 days. (They stay in 
 
  We will create a menu driven code for this, which accepts a person's index and the query, and fucntions accordingly
 
+
+
 ### Q3 p1 (status)
+input format: 
+    int DAY , int INDEX  
+Output format: 
+    string representing the status of the person of index "INDEX" on day "DAY"
+
+Note: DAY should not be less than the status alloted day
 
 ### Pseudocode p1
 ```c++
  access index of that person, in array
  cout<<status<<;
 ```
-### Q3 p2
+### Q3 p2 (location)
+input format: 
+    int INDEX
+Output format:
+    int current_station of the person with index "INDEX"
 
 ### Pseudocode p2
 ```c++
  access index of person
  cout<<cur_station;
 ```
-### Q3 p3
+### Q3 p3  (info regarding persons in a station )
+input format:
+    int DAY , int STATION_NUM
+output format:
+    list of the [positive , primaryContact , secondaryContact , Negative] persons in the station "STATION_NUM"  in order 
+
+NOTE: DAY should not be less than the status alloted day
 
 ### Pseudocode p3
 ```c++
+person* list;
  for(in person array)
  {
     if(in the station)
     {
-        if(stat == 1/2(primary/secondary))
-        {
-            cout<<that guy/girl;
-        }
-       else
-            continue;
+        Add to list ;
+
     }
  }
+    qsort ( list);
+printf ( list ) ; 
+
  ```
