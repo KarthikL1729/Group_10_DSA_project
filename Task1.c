@@ -10,17 +10,17 @@ Task1(int listPositive[], int numPositive, person arrPerson[], int X, int D, int
         arrPerson[listPositive[i]].status = 3;
         arrPerson[listPositive[i]].day = D;
         
-        for(int i=0;i<arrPerson[listPositive[i]].meet->cur;i++)
+        for(int i=0;i<arrPerson[listPositive[i]].meet.cur;i++)
         {
-            if(D-(arrPerson[listPositive[i]].meet->a[1][i]) <= X)
+            if(D-(arrPerson[listPositive[i]].meet.a[1][i]) <= X)
             {
-                arrPerson[arrPerson[listPositive[i]].meet->a[0][i]].status=2;
-                printf("Primary Contact : %d \n",arrPerson[listPositive[i]].meet->a[0][i]);
+                arrPerson[arrPerson[listPositive[i]].meet.a[0][i]].status=2;
+                printf("Primary Contact : %d \n",arrPerson[listPositive[i]].meet.a[0][i]);
                 printf("His Secondary Contacts are : ");
-                for(int j=0;j<arrPerson[arrPerson[listPositive[i]].meet->a[0][i]].meet->cur;j++)
+                for(int j=0;j<arrPerson[arrPerson[listPositive[i]].meet.a[0][i]].meet.cur;j++)
                 {
-                    arrPerson[arrPerson[arrPerson[listPositive[i]].meet->a[0][i]].meet->a[0][j]].status = 1;
-                    printf("%d ",arrPerson[arrPerson[listPositive[i]].meet->a[0][i]].meet->a[0][j]);
+                    arrPerson[arrPerson[arrPerson[listPositive[i]].meet.a[0][i]].meet.a[0][j]].status = 1;
+                    printf("%d ",arrPerson[arrPerson[listPositive[i]].meet.a[0][i]].meet.a[0][j]);
                 }
                 printf("\n\n");
             }
