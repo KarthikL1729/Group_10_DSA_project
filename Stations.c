@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-double CalculateDangerValue(StationNode Stn)
+double CalculateDangerValue(StationNode* Stn)
 {
-    double DangerVal = Stn.NumOfPositive + ((double)Stn.NumOfPrimary)/5 + ((double)Stn.NUmOfSecondary)/10;
+    double DangerVal = Stn->NumOfPositive + ((double)Stn->NumOfPrimary)/5 + ((double)Stn->NUmOfSecondary)/10;
     return DangerVal;
 }
 
