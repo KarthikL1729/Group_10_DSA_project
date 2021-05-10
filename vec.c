@@ -55,7 +55,7 @@ void set_vec(vec *v, double *val)
     {
         v->a[0][i] = val[0];
         v->a[1][i] = val[1];
-    };
+    }
 }
 
 double get_vec(vec *v, double in)
