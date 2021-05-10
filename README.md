@@ -120,3 +120,5 @@ Now running
 begins the execution.
 
 The input format is specified by the prompts, sample graphs have been given in test.txt which has been included.
+
+Only the files "maininput.c, Stations.c, dynamicheap.c, vec.c" and .h files are included.
