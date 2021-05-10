@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <limits.h>
 #include "dynamicheap.h"
-
 #include  <stdlib.h>
 
-void swap(pair *a, pair *b)
+void swap(pair *a, pair *b) //Swapping pairs
 {
     pair t = *a;
     *a = *b;
     *b = t;
 }
 
-heap *init(int s)
+heap *init(int s)  //initialising priority queue
 {
     heap *minheap = (heap *)malloc(sizeof(heap));
     if (minheap != NULL)
@@ -24,7 +23,7 @@ heap *init(int s)
     }
 }
 
-int empty(heap *h)
+int empty(heap *h)     //Returns 1 if queue is empty
 {
     if (h->n == 0)
         return 1;
@@ -32,12 +31,12 @@ int empty(heap *h)
         return 0;
 }
 
-pair top(heap *h)
+pair top(heap *h)   //Returns the top pair
 {
     return h->arr[0];
 }
 
-void move_up(heap *h, int in)
+void move_up(heap *h, int in)   //Moves a pair up to it's position
 {
     if(in == 0)
         return;
@@ -47,7 +46,7 @@ void move_up(heap *h, int in)
     move_up(h, (in - 1) / 2); //Recursively moving up if condition is satisfied
 }
 
-void move_down(heap *h, int in)
+void move_down(heap *h, int in) //Moves a pair down to it's position
 {
 
     if((in*2)+2 >= h->n)
@@ -80,7 +79,7 @@ void move_down(heap *h, int in)
     }
 }
 
-void push(heap *h, pair a)
+void push(heap *h, pair a)  //Pushes a pair into the priority queue
 {
     if (h->cap - h->n == 1)
     {

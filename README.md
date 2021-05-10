@@ -30,7 +30,11 @@ People on list L have no MOVEMENT from their station for 14 days. (They stay in 
 
 - Indices of the people who tested positive
 
- We are considering the people who tested positive to become negative after 14 days of quarantine. The primary and secondary contacts, on the other hand, will remain as they are, because they could be asymptomatic carriers.
+We are considering the people who tested positive to become negative after 14 days of quarantine. The primary and secondary contacts, on the other hand, will remain as they are, because they could be asymptomatic carriers.
+
+In task 1, while we're printing all the primary contacts and their respective secondary contacts of the list L one by one, there's a possibility of clashes:
+
+For example, let's say, people 1, 2 and 3 are at the same station, and 1 tested positive. Then, for the primary contact 2, 3 is a secondary contact, and for the primary contact 3, 2 is a secondary contact. In this case, our code will output the same, but at the end, it'll update the status of both 2 and 3 as primary contacts.
 
 ### Q2 specific
 
@@ -68,21 +72,19 @@ Note: DAY should not be less than the status alloted day
  cout<<status<<;
 ```
 ### Q3 p2 (location)
-input format: 
-    int INDEX
-Output format:
-    int current_station of the person with index "INDEX"
+Input format: 
+The person's index
 
 ### Pseudocode p2
 ```c++
  access index of person
  cout<<cur_station;
 ```
-### Q3 p3  (info regarding persons in a station )
-input format:
-    int DAY , int STATION_NUM
-output format:
-    list of the [positive , primaryContact , secondaryContact , Negative] persons in the station "STATION_NUM"  in order 
+### Q3 p3  (info regarding persons in a station)
+Input format:
+Day_number Station_number
+Output format:
+    List of the [positive , primaryContact , secondaryContact , Negative] persons in the station "STATION_NUM"  in order 
 
 NOTE: DAY should not be less than the status alloted day
 
@@ -101,3 +103,20 @@ person* list;
 printf ( list ) ; 
 
  ```
+
+ ### Running the program 
+
+ A makefile has been included, so running the command
+
+ ```
+ make project
+```
+Compiles the entire code into an executable called project.
+
+Now running 
+```
+./project
+```
+begins the execution.
+
+The input format is specified by the prompts, sample graphs have been given in test.txt which has been included.

@@ -17,7 +17,7 @@ int *DijkstraQ2(int starting, int ending, StructStations *StationGraph);
 
 void inputRoad(int M, StructStations *StationGraph)
 {
-    for (int i = 0; i < StationGraph->NumOfStations; i++)
+    for (int i = 0; i < StationGraph->NumOfStations; i++)   //Initialising data members of the structure
     {
         init_vec(&StationGraph->Stations[i].StnLength);
         init_vec(&StationGraph->Stations[i].StnDanger);
@@ -29,13 +29,12 @@ void inputRoad(int M, StructStations *StationGraph)
 
     // inputs are U ,V and W
     double u[2] = {0}, v[2] = {0};
-    //double a[2] = {0} , b[2] = {0};
     for (int i = 0; i < M; i++)
     {
 
-        scanf("%lf %lf %lf", &u[0], &v[0], &v[1]);
+        scanf("%lf %lf %lf", &u[0], &v[0], &v[1]);  //Take input for U, V and W
         u[1] = v[1];
-        pb_vec(&(*StationGraph).Stations[(int)u[0]].StnLength, v);
+        pb_vec(&(*StationGraph).Stations[(int)u[0]].StnLength, v);  //Pushing back 
         pb_vec(&(*StationGraph).Stations[(int)v[0]].StnLength, u);
 
         u[1] = v[1] = 0;
@@ -57,9 +56,8 @@ void printstat(int N, StructStations *StationGraph) // only for debugging
     }
 }
 
-void initialMeet(person *arrPerson, int K)
+void initialMeet(person *arrPerson, int K)  //This initialises the meet list for the people on day 0, for the people they meet in their stations
 {
-
     double p1[2] = {0, 0};
     // O(k^2)
     for (int i = 0; i < K; i++)
@@ -79,7 +77,7 @@ void initialMeet(person *arrPerson, int K)
     }
 }
 
-void printMeetList(person *arrPerson, int K)
+void printMeetList(person *arrPerson, int K)  //Can be used by giving 5 as input in the menu, prints the current meet list
 {
 
     for (int i = 0; i < K; i++)
@@ -92,7 +90,7 @@ void printMeetList(person *arrPerson, int K)
     }
 }
 
-void Task1(int listPositive[], int numPositive, person *arrPerson, int X, int D, int K)
+void Task1(int listPositive[], int numPositive, person *arrPerson, int X, int D, int K) //Task 1, making the people positive depending on the list and updating everyone's status
 {
     //listPositive is an array containing the indices of people who tested positive, numPositive is the number of people who tested positive,
     //arrPerson is the array containing all the people, D is the current day and X is the number of days upto which we'd classify people as primary or secondary contacts.
@@ -102,10 +100,10 @@ void Task1(int listPositive[], int numPositive, person *arrPerson, int X, int D,
         arrPerson[listPositive[i]].status = 3;
         arrPerson[listPositive[i]].day = D;
 
-        if (arrPerson[listPositive[i]].meet.cur == 0)
+        if (arrPerson[listPositive[i]].meet.cur == 0)   //Empty meet list condition
         {
             printf("No Primary Contacts of Person %d\n\n", listPositive[i]);
-        }
+        }   
         else
         {
             for (int k = 0; k < arrPerson[listPositive[i]].meet.cur; k++)
@@ -119,15 +117,15 @@ void Task1(int listPositive[], int numPositive, person *arrPerson, int X, int D,
                         if (arrPerson[(int)arrPerson[listPositive[i]].meet.a[0][k]].status < 3)
                             arrPerson[(int)arrPerson[listPositive[i]].meet.a[0][k]].status = 2;
 
-                        printf("Primary Contact of %d : %.0lf \n", listPositive[i], arrPerson[listPositive[i]].meet.a[0][k]);
+                        printf("Primary Contact of %d : %.0lf \n", listPositive[i], arrPerson[listPositive[i]].meet.a[0][k]); //Prints the primary contact
 
                         if (arrPerson[(int)arrPerson[listPositive[i]].meet.a[0][k]].meet.cur == 1)
                         {
-                            printf("No secondary contacts from this Primary Contact");
+                            printf("No secondary contacts from this Primary Contact");  //Empty meet list condition
                         }
                         else
                         {
-                            printf("His/Her Secondary Contacts from this Primary Contact are : ");
+                            printf("His/Her Secondary Contacts from this Primary Contact are : ");  //Prints the secondary contacts WITH RESPECT TO the primary contact
 
                             for (int j = 0; j < arrPerson[(int)arrPerson[listPositive[i]].meet.a[0][k]].meet.cur; j++)
                             {
@@ -151,7 +149,7 @@ void Task1(int listPositive[], int numPositive, person *arrPerson, int X, int D,
     }
 }
 
-struct StnForDijkstra
+struct StnForDijkstra   //STructure used specifically for Dijkstra's algorithm
 {
     double danger;
     int prev;
@@ -160,7 +158,7 @@ struct StnForDijkstra
 typedef struct StnForDijkstra StnForDijkstra;
 
 //This will return the length to end station in the adj list
-double RetLength(vec Adj, int end)
+double RetLength(vec Adj, int end)  //Returns the length of an edge depending on input, used in Dijkstra 
 {
     for (int i = 0; i < Adj.cur; i++)
         if (Adj.a[0][i] == end)
@@ -175,7 +173,7 @@ void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int 
 void UpdateStatGraph(StructStations *StationGraph, person *arrPerson, int K)
 {
 
-    for(int i = 0; i < StationGraph->NumOfStations; i++)
+    for(int i = 0; i < StationGraph->NumOfStations; i++)    //Initialising everything to zero, starting calculations from 0 too
     {
         StationGraph->Stations[i].DangerValue = 0;
         StationGraph->Stations[i].NumOfPositive = 0;
@@ -183,7 +181,7 @@ void UpdateStatGraph(StructStations *StationGraph, person *arrPerson, int K)
         StationGraph->Stations[i].NUmOfSecondary = 0;
     }
     //O(k)
-    for (int i = 0; i < K; i++)
+    for (int i = 0; i < K; i++) //Updating the counters 
     {
 
         if (arrPerson[i].status == 3)
@@ -200,7 +198,7 @@ void UpdateStatGraph(StructStations *StationGraph, person *arrPerson, int K)
         }
     }
 
-    for (int i = 0; i < StationGraph->NumOfStations; i++)
+    for (int i = 0; i < StationGraph->NumOfStations; i++)   //Updating danger values of stations
     {
         StationGraph->Stations[i].DangerValue = CalculateDangerValue(&StationGraph->Stations[i]);
     }
@@ -208,10 +206,8 @@ void UpdateStatGraph(StructStations *StationGraph, person *arrPerson, int K)
     for (int i = 0; i < StationGraph->NumOfStations; i++)
     {
 
-        for (int j = 0; j < StationGraph->Stations[i].StnDanger.cur; j++)
+        for (int j = 0; j < StationGraph->Stations[i].StnDanger.cur; j++)   //Updating station danger vector
         {
-
-            //StationGraph->Stations[i].StnDanger.a[1][j] = CalculateDangerValue (&StationGraph->Stations[(int)StationGraph->Stations[i].StnDanger.a[0][j]] );
             StationGraph->Stations[i].StnDanger.a[1][j] = StationGraph->Stations[(int)StationGraph->Stations[i].StnDanger.a[0][j]].DangerValue;
         }
     }
@@ -453,7 +449,7 @@ int main()
             //No need to add condition for selectTask3==0.
         }
 
-        /*if (selectTask == 4)  /// used to start from a random case
+        /*if (selectTask == 4)   //used to start from a random case, only debugging
             { 
 
                 printf("enter the stations , status , day of each person in order...\n");
@@ -463,7 +459,7 @@ int main()
                 }
             }
             */
-        if (selectTask == 5)
+        if (selectTask == 5)    //Bonus task 5, printing meet list with day of meeting
         {
             printMeetList(arrPerson, K);
         }
@@ -618,15 +614,13 @@ int *DijkstraQ2(int starting, int ending, StructStations *StationGraph)
     }
 
     //Need to sort the paths based on length if danger values are equal
-    //yet to do
-
-    // StationGraph->Stations[i].Stn
 
     int best1 = 0, best2 = 1, best3 = 2;
 
     int length1 = 0, length2 = 0, length3 = 0;
     if ((BestDangerValues[0] == BestDangerValues[1]) && (BestDangerValues[1] == BestDangerValues[2])) //all 3 equal
-    {
+    {   
+        //Calculating lengths of paths
         for (int i = 1; i < BestPaths[0][0]; i++)
             length1 += RetLength(StationGraph->Stations[BestPaths[0][i]].StnLength, BestPaths[0][i + 1]);
         for (int i = 1; i < BestPaths[1][0]; i++)
@@ -634,6 +628,7 @@ int *DijkstraQ2(int starting, int ending, StructStations *StationGraph)
         for (int i = 1; i < BestPaths[2][0]; i++)
             length3 += RetLength(StationGraph->Stations[BestPaths[2][i]].StnLength, BestPaths[2][i + 1]);
 
+        //Big block to compare the lengths and sort paths accordingly in case of same danger value
         if (length1 > length2)
         {
             if (length1 > length3)
@@ -675,6 +670,7 @@ int *DijkstraQ2(int starting, int ending, StructStations *StationGraph)
 
     if (BestDangerValues[0] == BestDangerValues[1])
     {
+        //Calculating length, repeat for different condition
         for (int i = 1; i < BestPaths[0][0]; i++)
             length1 += RetLength(StationGraph->Stations[BestPaths[0][i]].StnLength, BestPaths[0][i + 1]);
         for (int i = 1; i < BestPaths[1][0]; i++)
@@ -727,19 +723,6 @@ int *DijkstraQ2(int starting, int ending, StructStations *StationGraph)
         for (int j = 1; j < BestPaths[best3][0]; j++)
             printf("%d-->", BestPaths[best3][j]);
         printf("%d\n\n", BestPaths[best3][BestPaths[best3][0]]);
-
-        /*   
-    for (int i = 0; i < 3; i++)
-    {
-        if (BestPaths[i][0] == -1)
-            break;
-        printf("Path %d\n", i);
-        printf("Danger Value: %ld\n", BestDangerValues[i]);
-        printf("Path:\n");
-        for (int j = 1; j < BestPaths[i][0]; j++)
-            printf("%d<--", BestPaths[i][j]);
-        printf("%d\n\n", BestPaths[i][BestPaths[i][0]]);
-        */
     }
 
     char ch = 0;
@@ -791,9 +774,10 @@ int *DijkstraQ2(int starting, int ending, StructStations *StationGraph)
     return retArr;
 }
 
-void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int day)
+void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int day)    //Updates meet list depending on path chosen in Dijkstra 
 {
     //skipping the starting station as they should already be in the meet list
+    //used as a sub routine for task 2
     for (int i = 2; i <= PathArr[0]; i++)
     {
         for (int j = 0; j < NumOfPersons; j++)
@@ -850,24 +834,9 @@ void UpdateMeet(int *PathArr, int PID, person *PersonArr, int NumOfPersons, int 
                     if (PersonArr[j].status == 2)  //j is Primary
                         PersonArr[PID].status = 1; //set to secondary
                 }
-
-                /* for ( int l =0 ; l<PersonArr[PID].meet.cur ; l++ )
-                { 
-                    printf ( "%.0lf %.0lf\n" , PersonArr[PID].meet.a[0][l] ,PersonArr[PID].meet.a[1][l]);
-                }
-                */
             }
         }
     }
 }
 
-/*
-1. Taking input for stngraph
-2. heaviest edge no2                -- done
-3. update the meet list
-4. Testing
-
-5. sort paths based on length       --done
-
-
-*/
+//END

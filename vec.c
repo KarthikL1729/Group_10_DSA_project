@@ -5,21 +5,18 @@
 
 #define SIZE 4
 
-void init_vec(vec *v)
+void init_vec(vec *v)   //Initialising vector, to be done whenever a new vector is declared
 {
     v->a[0] = (double*)malloc(sizeof(double)*SIZE);
     v->a[1] = (double*)malloc(sizeof(double)*SIZE);
     v->cap = SIZE;
     v->cur = 0;
-    //printf("HERE\n");
 }
 
-int resize_vec(vec *v, int c)
+int resize_vec(vec *v, int c)   //Resizes vector when required, background
 {
-    //printf("HEREB\n");
     double *x = (double*)realloc(v->a[0], sizeof(double)*c);
     double *y = (double*)realloc(v->a[1],sizeof(double)*c);
-    //printf("Resizing\n");
     if(x && y)
     {
         v->a[0] = x;
@@ -30,20 +27,18 @@ int resize_vec(vec *v, int c)
     return -1;
 }
 
-void pb_vec(vec *v, double *val)
+void pb_vec(vec *v, double *val)    //Pushes back a pair in the vector
 {
     if(v->cap == v->cur)
     {
-        //printf("Whytf\n");
         resize_vec(v, v->cap*2);
     }
-    // v->a[v->cur++] = val;
     v->a[0][v->cur] = val[0];
     v->a[1][v->cur] = val[1];
     v->cur++;
 }
 
-void set_vec(vec *v, double *val)
+void set_vec(vec *v, double *val)   //Modifies the value of a given element in the vector of pairs
 {
     //we are searching the vector by the first element.
     int i=0;
@@ -58,7 +53,7 @@ void set_vec(vec *v, double *val)
     }
 }
 
-double get_vec(vec *v, double in)
+double get_vec(vec *v, double in)   //Returns the second element of the pair that matches with the requested first element
 {
     //we are searching the vector by the first element.
 
@@ -68,8 +63,8 @@ double get_vec(vec *v, double in)
     
     return -1;
 }
-
-void del_vec(vec *v, double ToDelete)
+                
+void del_vec(vec *v, double ToDelete)   //Deletes an element depending on the given data 
 {
     //we are searching the vector by the first element.
 
@@ -94,7 +89,7 @@ void del_vec(vec *v, double ToDelete)
     }
 }
 
-int fr_vec(vec *v)
+int fr_vec(vec *v)  //Frees the memory
 {
     free(v->a[0]);
     free(v->a[1]);

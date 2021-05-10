@@ -21,7 +21,7 @@ void move_up(heap *h, int in);
 void move_down(heap *h, int in);
 void push(heap *heap, pair a);
 pair ExtractMin(heap *h);
-// void pop(heap *heap);
+// void pop(heap *heap);    //Same as ExtractMin
 // heap *heapify(pair *a, int s, int n);
 
 #endif

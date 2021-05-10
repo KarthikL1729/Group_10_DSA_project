@@ -44,7 +44,4 @@ void CreateStationsGraph(StructStations *GraphOfStations, int NumOfStations);
 //Given input of the starting and ending stations and the distance, it is updated in the station node of both the stations
 void UpdateStnLength(int U, int V, double W, StructStations *GraphOfStations);
 
-//A function to return top3 safest paths
-
-
 #endif
